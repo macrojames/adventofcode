@@ -22,12 +22,10 @@ for i in range(len(_input) // 3):
         
         double = set(left) & set(right)
         sum1 += sum(map(get_prio, double))
-        print("Debug:", double)
     
     badge = set(group[0]) & set(group[1]) & set(group[2])
     sum2 += sum(map(get_prio, badge))
-    print(group, badge)
-
+    
 print("Part 1: ", sum1)
 print("Part 2: ", sum2)
 print(f"Time elapsed: {round(time.time() - start_timer, 3)}s")
