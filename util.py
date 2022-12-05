@@ -10,4 +10,4 @@ def read_input_lines(day, sample_mode):
     return [_.strip() for _ in open_input(day, sample_mode).readlines()]
 
 def read_input_raw(day, sample_mode):
-    return open_input(day, sample_mode).read().strip()
+    return open_input(day, sample_mode).read()
