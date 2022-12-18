@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import time
-from util import read_input_lines, read_input_raw
+from util import read_input_lines, bfs
 start_timer = time.time()
 
 SAMPLE = False
@@ -50,22 +50,7 @@ def get_adj_cubes(cube_pos):
     return n
 
 
-def bfs(node, exclude):
-    visited = set()  # List for visited nodes.
-    queue = []  # Initialize a queue
-    visited.add(node)
-    queue.append(node)
-
-    while queue:
-        m = queue.pop(0)
-        for neighbour in get_adj_cubes(m):
-            if neighbour not in visited and neighbour not in exclude:   # can't visit cubes
-                visited.add(neighbour)
-                queue.append(neighbour)
-    return visited
-
-
-outside = bfs((0, 0, 0), exclude=cubes)
+outside = bfs((0, 0, 0), getter=get_adj_cubes, exclude=cubes)
 pockets = set()
 outer_world = cubes | outside
 for x in range(max_x):

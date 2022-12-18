@@ -116,3 +116,18 @@ def dijkstra_graph(graph, start, end, get_cost):
                 previous[neighbor] = node
                 
     return dist, previous
+
+
+def bfs(node, getter, exclude):
+    visited = set()  # List for visited nodes.
+    queue = []  # Initialize a queue
+    visited.add(node)
+    queue.append(node)
+
+    while queue:
+        m = queue.pop(0)
+        for neighbour in getter(m):
+            if neighbour not in visited and neighbour not in exclude:   # can't visit excludes
+                visited.add(neighbour)
+                queue.append(neighbour)
+    return visited
