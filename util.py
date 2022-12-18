@@ -87,3 +87,32 @@ def dijkstra(grid, start, end, get_cost):
                 previous[neighbor] = node
                 
     return dist, previous
+
+def dijkstra_graph(graph, start, end, get_cost):
+    nodes_open = PriorityQueue()
+    nodes_open.put((0, start))
+    dist = {start: 0}
+    previous = {}
+    visited = set()
+
+    while nodes_open:
+        while not nodes_open.empty():
+            _, node = nodes_open.get()
+            if node not in visited:
+                break
+        else:
+            break
+        visited.add(node)
+        if node == end:
+            break
+        check_neighbors = [_ for _ in graph[node].get('targets', []) if _ not in visited]
+        for neighbor in check_neighbors:
+            new_dist = dist.get(node) + get_cost(node, neighbor)
+            if new_dist == float('inf'):    # Abbruchmöglichkeit durch cost implementierung
+                next
+            if new_dist < dist.get(neighbor, float('inf')):
+                nodes_open.put((new_dist, neighbor))
+                dist[neighbor] = new_dist
+                previous[neighbor] = node
+                
+    return dist, previous
