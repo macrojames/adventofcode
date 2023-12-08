@@ -2,6 +2,7 @@
 import time
 import re
 from util import read_input_lines
+from math import lcm
 
 start_timer = time.time()
 
@@ -25,6 +26,9 @@ def route(s, e):
         instruction = instructions[pointer % len(instructions)]
         current = mapping[current[instruction]]
         pointer += 1
+        if pointer > 10E4:
+                print("FAIL", pointer, s, e)
+                break
     return pointer
 
 def part1(s, e):
@@ -36,16 +40,16 @@ def part2():
     ends = set([_ for _ in mapping.keys() if _.endswith('Z')])
     currents = [_ for _ in starts]
 
-    pointer = 0
-    while set(currents) - set(ends):
-        instruction = instructions[pointer % len(instructions)]
-        for i, current_node in enumerate(currents):
-            currents[i] = mapping[current_node][instruction]
-        pointer += 1
-        if DEBUG and pointer <= 10 or pointer % 1024**2 == 0:
-            print(f"Step {pointer}: {currents}")
+    nr=[]
+    for s in starts:
+        for e in ends:
+            x=  route(s, e)
+            print(s, e,x)
+            if x < 10E4:
+                nr.append(x)
 
-    return pointer
+    return lcm(*nr)
+
 
 #print("Part 1: ", part1("AAA", "ZZZ"))  
 print("Part 2: ", part2())
