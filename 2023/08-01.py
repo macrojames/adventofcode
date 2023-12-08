@@ -27,7 +27,7 @@ def route(s, e):
         current = mapping[current[instruction]]
         pointer += 1
         if pointer > 10E4:
-                print("FAIL", pointer, s, e)
+                #print("FAIL", pointer, s, e)
                 break
     return pointer
 
@@ -44,7 +44,7 @@ def part2():
     for s in starts:
         for e in ends:
             x=  route(s, e)
-            print(s, e,x)
+            #print(s, e,x)
             if x < 10E4:
                 nr.append(x)
 
