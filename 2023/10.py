@@ -67,8 +67,6 @@ def part2(start):
                 #F----7
                 #|F-7.|     3u 1o
                 #LJ.L-J     0u 2o
-                delta_r = {'|': 0, '.': 0, '-': 0, 'F': 1, '7': 1, 'J': -1, 'L': -1}
-                delta_c = {'|': 0, '.': 0, '-': 0, 'F': 1, '7': -1, 'J': -1, 'L': 1}
                 row_lower_half = sum(lefts.count(_) for _ in ['|', 'F', '7'])
                 row_upper_half = sum(lefts.count(_) for _ in ['|', 'J', 'L'])
                 col_left_half  = sum(tops.count(_) for _ in ['-', 'J', '7'])
