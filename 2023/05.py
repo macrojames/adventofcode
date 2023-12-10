@@ -17,7 +17,7 @@ current = None
 
 for line in inputs:
     if line.startswith("seeds"):
-        m = re.findall("\d+", line)
+        m = re.findall("\\d+", line)
         seeds = list(map(int, m))
         continue
     if line.startswith("seed-to-soil map:"): current = s2so
