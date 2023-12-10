@@ -7,8 +7,8 @@ from collections import deque
 
 start_timer = time.time()
 
-SAMPLE = True
-DEBUG = True
+SAMPLE = False
+DEBUG = False
 
 inputs = read_input_lines('05', SAMPLE)
 
@@ -53,63 +53,50 @@ def part1():
 
 def part2():
     for l in [s2so, so2f, f2w, w2l, l2t, t2h, h2loc]: l.sort(key=lambda x:x[1])
-    locations = []#
-    next_queue = []
-    obj = [s2so]#, so2f, f2w, w2l, l2t, t2h, h2loc]
-    current = obj[0]
-    o = 0 
-    queue = deque(sorted(batched(seeds, 2),key=lambda x:x[0]))
-    queue.append((None, None))      # None = Seperator
-    while queue:
-        seed_start, seed_range = queue.popleft()
-        if seed_start is None:
-            o += 1
-            if o == len(obj): 
-                if DEBUG: print("No more object mappings")
-                if DEBUG: print(queue)
-                if DEBUG: print(next_queue)
-                break
-            current = obj[i]
-            queue.append((None, None))  
-            queue.extend(next_queue)   
-            next_queue = []   
-        seed_end = seed_start + seed_range
-        if DEBUG: print(f"Checking {seed_start}  {seed_range}  {seed_end}")
+    conversions = [s2so, so2f, f2w, w2l, l2t, t2h, h2loc]
+    seed_ranges = [(ss, ss + sr) for ss, sr in sorted(batched(seeds, 2))]
+    
+    for block in conversions:
+        if DEBUG: print("------- New Block -------")
+        next_ranges = set([])
+        for i, (seed_start, seed_end) in enumerate(seed_ranges):
+            if DEBUG: print("------- New Seed -------")
+            done = False
+            for dst, src, r in block:
+                if DEBUG: print("------- New Range -------")
+                if done: break
+                end = src + r
+                if DEBUG: print(f"Range: {src:3} - {end:3}: {dst:3} Seed: {seed_start:3} - {seed_end:3}", end=" --> ")
+                if seed_end < src or seed_start > end:
+                    # komplett außerhalb, nichts ändern
+                    next_ranges.add((seed_start, seed_end))
+                    if DEBUG: print("Case 1")         
+                if seed_start <= end and seed_end >= src:
+                    # Treffer in der Range
+                    if (seed_start, seed_end) in next_ranges:
+                        next_ranges.remove((seed_start, seed_end))
+                    hit_start = max(src, seed_start)
+                    hit_end = min(end, seed_end)
+                    mapped_start = dst + (hit_start - src)
+                    mapped_end = mapped_start + (hit_end - hit_start)
+                    next_ranges.add((mapped_start, mapped_end))
+                    if DEBUG: print("Case 4", end=" ")
 
-        for maps in current:
-            dst_start, src_start, src_range = maps
-            src_end = src_start + src_range - 1
-            delta = dst_start - src_start
-            if seed_start > src_end or seed_end < src_start:  # seeds erreichen die range nicht
-                next_queue.append([seed_start, seed_range])
-                continue
-            # in range                         seed_start > src_start and seed_end < src_end
-            # in range | cccc                  seed_start >= src_start and seed_start <= src_end and seed_end > src_end
-            # aaa | in range                   seed_start < src_start and seed_end >= src_start src_end and seed_end <= src_end
-            # aaa | in range | cccc    seed_start < src_start and seed_end > src_end
-            # aaa       -> erledigt
-            # in range  -> erledigt
-            # ccc       -> weiter checken
-            if seed_start >= src_start and seed_end <= src_end:
-                next_queue.append([dst_start + delta, seed_range])
-            elif seed_start >= src_start and seed_start <= src_end and seed_end > src_end:
-                range_a = seed_range - (seed_end - seed_start) 
-                next_queue.append([dst_start + delta, range_a])
-                queue.appendleft([seed_end + 1, seed_range - range_a])
-            elif seed_start < src_start and seed_end >= src_start and seed_end <= src_end:
-                range_a = seed_range - (src_start - seed_start) 
-                next_queue.append([seed_start, range_a])
-                next_queue.append([dst_start, seed_range - range_a])
-                pass
-            elif seed_start < src_start and seed_end > src_end:
-                range_a = seed_range - (src_start - seed_start) 
-                range_c = seed_range - src_range - range_a 
-                next_queue.append([seed_start, range_a])
-                next_queue.append([dst_start, src_range])
-                queue.appendleft([src_end + 1, range_c])
-                pass
-        min_checked = seed_end
+                    if seed_start < src and seed_end > src:
+                        # es hängt links über, abschneiden
+                        next_ranges.add((seed_start, src - seed_start))
+                        if DEBUG: print("Case 2", end=" ")
+                    if seed_start < end and seed_end > end:
+                        # es hängt rechts über, abschneiden
+                        seed_ranges.insert(i + 1, (end + 1 , seed_end))
+                        if DEBUG: print("Case 3", end=" ")
+                    done = True
+                if DEBUG: print()
 
+            if DEBUG: print(next_ranges)
+        
+        seed_ranges = sorted(next_ranges, key=lambda x:x[0])
+    return seed_ranges[0][0] - 1
 
 
 print("Part 1: ", min(part1()))
