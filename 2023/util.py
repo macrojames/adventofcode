@@ -128,10 +128,12 @@ def bfs(node, getter, exclude=[], costs = None, get_cost=lambda x:1):
 
     while queue:
         m = queue.pop(0)
-        current_cost = costs.get(m, 0)
+        if costs is not None:
+            current_cost = costs.get(m, 0)
         for neighbour in getter(m):
             if neighbour not in visited and neighbour not in exclude:   # can't visit excludes
                 visited.add(neighbour)
                 queue.append(neighbour)
-                costs[neighbour] = current_cost + get_cost(neighbour)
+                if costs is not None:
+                    costs[neighbour] = current_cost + get_cost(neighbour)
     return visited
