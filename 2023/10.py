@@ -54,7 +54,8 @@ def part1(start):
 print("Part 1: ", costs:=part1(start))
 for r in range(MAX_R + 1):
     for c in range(MAX_C + 1):
-        print(costs.get((r,c), '.'))
+        print(costs.get((r,c), '.'), end='')
+    print()
 #print("Part 2: ", part1())
 
 
