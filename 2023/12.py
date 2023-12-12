@@ -22,7 +22,7 @@ def mutate(src, mutations):
     mutations = list(mutations)
 
     if DEBUG: print(f"Analyzing {"".join(src)} for {mutations}")
-    solutions = []
+    solutions = 0
     if not mutations or not src:
         return solutions
     current_mut = mutations[0]
@@ -49,10 +49,12 @@ def mutate(src, mutations):
             if DEBUG: print(f"Found Prefix in {"".join(src)} having {current_mut}: {prefix}")
             if len(mutations) > 1:
                 suffixes = mutate(tuple(src[i + current_mut + 1:]), mutations=tuple(mutations[1:]))
-                for suffix in suffixes:
-                    solutions.append(f"{prefix}{suffix}")
+                solutions += suffixes
+                #for suffix in suffixes:
+                #    solutions.append(f"{prefix}{suffix}")
             else:
-                solutions.append(prefix)
+                solutions += 1
+                #solutions.append(prefix)
 
     return solutions
 
@@ -62,7 +64,7 @@ def part1():
 
     for i, (s, m) in enumerate(zip(sources, mutations)):
         if DEBUG and i % 10 == 0: print(f"{i + 1} of {len(sources)}: Current Sum: {su:10}", end=' + ')
-        l = len(mutate(s, m))
+        l = mutate(s, m)
         su += l
         if DEBUG and i % 10 == 0: print(f"{l:7}")
     return su
@@ -75,7 +77,7 @@ def part2():
         #print((s + ['?']) * 5, m * 5)
         s = list(s)
         fi = s + ['?'] + s + ['?'] + s + ['?'] + s + ['?'] + s # Fuck it, sonst hängt hinten ein ? dran.
-        l = len(mutate(tuple(fi), m * 5))
+        l = mutate(tuple(fi), m * 5)
         su += l
         if i % 10 == 0: print(f"{l:7}")
     return su
@@ -91,6 +93,6 @@ if SAMPLE and DEBUG:
 
 
 print("Part 1:", part1())
-#print("Part 2:", part2())
+print("Part 2:", part2())
 
 print(f"Time elapsed: {round(time.time() - start_timer, 3)}s")
