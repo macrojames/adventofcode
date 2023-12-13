@@ -1,6 +1,6 @@
 import os
 from queue import PriorityQueue
-import sys
+import itertools
 
 
 def open_input(day, sample_mode, part=1):
@@ -137,3 +137,13 @@ def bfs(node, getter, exclude=[], costs = None, get_cost=lambda x:1):
                 if costs is not None:
                     costs[neighbour] = current_cost + get_cost(neighbour)
     return visited
+
+
+def split_list(lst, val):
+    return [list(group) for k, 
+            group in
+            itertools.groupby(lst, lambda x: x==val) if not k]
+
+def line_diff(a, b):
+    if a == b: return 0
+    return sum(1 for _ in range(len(a)) if a[_] != b[_] )
