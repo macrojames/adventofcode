@@ -23,7 +23,7 @@ sorter = {'N': lambda x: ( x[0], x[1]),
           'W': lambda x: ( x[1], x[0]), 
           'E': lambda x: (-x[1], x[0])}
 
-@functools.cache
+
 def move(direction, rocks):
     movements = 0
     new_rocks = set()
@@ -33,7 +33,7 @@ def move(direction, rocks):
         nr, nc = r + dr, c + dc
         if nr < 0 or nr >= len_r or nc < 0 or nc >= len_c:
             new_rocks.add((r, c))    
-        elif (nr, nc) not in blocks and (nr, nc) not in new_rocks:
+        elif (nr, nc) not in new_rocks and (nr, nc) not in blocks :
             new_rocks.add((nr, nc))
             movements += 1
         else:
@@ -70,24 +70,27 @@ def part2():
     rs = rocks
     old_len = len(rocks)
     positions = []
-    for i in range(1000):
+    loads = {}
+    cycle_offset, cycle_length = None, None
+    for i in range(0, 200):
+        hashable = tuple(sorted(rs))                                        
+        if hashable in positions:  
+            cycle_positions = positions[positions.index(hashable):]
+            cycle_length = len(cycle_positions)
+
+            goal_pos = (1000000000 - i) % cycle_length
+            return loads[ cycle_positions[(goal_pos) % len(cycle_positions)]]
+        
+        positions.append(hashable)
         for d in ['N', 'W', 'S', 'E']:
             movs = 1
             while movs:
-                movs, rs = move(d, tuple(sorted(rs)))
+                movs, rs = move(d, rs)
                 assert len(rs) == old_len
-        r=load('N', rs)
-        print(f"Finished cycle {i:4} with Load {r:7} for {len(rocks)} rocks")
-        hashable = tuple(sorted(rs))
-        if not hashable in positions: positions.append(hashable)
-        else: 
-            #print(f"Finished cycle {i:4} with repeating starting position @ {positions.index(hashable)}")
-            cycle_length = i-positions.index(hashable)
-            cycle_offset = positions.index(hashable)
-            target_pos = 1 + (1000000000 - cycle_offset) % cycle_length
-            r = load('N', positions[target_pos])
-            print(f"Should be cycle {target_pos} @ load={r}")
-            break
+        k = tuple(sorted(rs)) 
+        r=load('N', k)
+        loads[k] = r
+        print(f"Finished cycle {i:4} with with Load {r=:7}")
     return r   
 print(f"Starting with {len(rocks)} rocks")
 print("Part 1: ", part1())
