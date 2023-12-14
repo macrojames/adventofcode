@@ -12,8 +12,7 @@ inputs = read_input_lines(os.path.splitext(os.path.basename(__file__))[0], SAMPL
 def part1():
     return 1
 
-
-#print("Part 1: ", part1())
+print("Part 1: ", part1())
 #print("Part 2: ", part2())
 
 print(f"Time elapsed: {round(time.time() - start_timer, 3)}s")
