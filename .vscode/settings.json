@@ -1,4 +1,5 @@
 {
     "debug.console.collapseIdenticalLines": false,
-    "austin.path": ".venv\\Scripts\\austin.exe"
+    "austin.path": ".venv\\Scripts\\austin.exe",
+    "austin.lineStats": "Both"
 }
