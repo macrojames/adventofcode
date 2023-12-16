@@ -2,6 +2,7 @@ import os
 from queue import PriorityQueue
 import itertools
 
+dirs = {'S': (1, 0), 'N': (-1, 0), 'W': (0, -1), 'E': (0, 1)}
 
 def open_input(day, sample_mode, part=1):
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -147,3 +148,7 @@ def split_list(lst, val):
 def line_diff(a, b):
     if a == b: return 0
     return sum(1 for _ in range(len(a)) if a[_] != b[_] )
+
+
+def in_bounds(r, c, max_r, max_c):
+    return 0 <= r <= max_r and 0 <= c <= max_c
