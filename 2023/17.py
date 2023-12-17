@@ -23,6 +23,7 @@ def part1(start, end, min_steps=0, max_steps=3):
     q = []
     heapq.heappush(q, (0, (*start, 0, 0, 0)))   # heatloss, (r, c, dr, dc, n)
     visited = set()
+    min_costs = {}
     while q:
         heatloss, (r, c, dr, dc, n) = heapq.heappop(q)
 
@@ -43,13 +44,13 @@ def part1(start, end, min_steps=0, max_steps=3):
                 continue
             if (nr, nc, ndr, ndc, nn) in visited:
                 continue
-
+            
             heapq.heappush(q, ((heatloss + grid[nr][nc], (nr, nc, ndr, ndc, nn))))
             visited.add((nr, nc, ndr, ndc, nn))
-
+            
             if (nr, nc) == end and nn >= min_steps:
                 return heatloss + grid[nr][nc], visited
-    return 
+    return heatloss + grid[nr][nc], visited
 
 
 def print_grid(grid, visited):
@@ -68,11 +69,11 @@ def part2():
 
 p1, visited = part1((0,0), (max_r, max_c))
 
-#assert p1 == 46 if SAMPLE else 7185, f"{p1=}"    # falsche Antwort
+assert (p1 == 102 if SAMPLE else 843), f"{p1=}"    # falsche Antwort
 print("Part 1: ", p1)
 
-#p2 = part2()
-#assert p2 == 51 if SAMPLE else 7616, f"{p2=}"    # falsche Antwort
-print("Part 2: ", part2())
+p2 = part2()
+assert p2 == (94 if SAMPLE else 1017), f"{p2=}"    # falsche Antwort
+print("Part 2: ", p2)
 
 print(f"Time elapsed: {round(time.time() - start_timer, 3)}s")
