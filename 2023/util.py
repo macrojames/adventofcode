@@ -81,7 +81,7 @@ def dijkstra(grid, start, end, get_cost):
             break
         check_neighbors = [_ for _ in arr2d_get_near_idx(grid, *node) if _ not in visited]
         for neighbor in check_neighbors:
-            new_dist = dist.get(node) + get_cost(grid[node[0]][node[1]], grid[neighbor[0]][neighbor[1]], previous)
+            new_dist = dist.get(node) + get_cost(grid[node[0]][node[1]], grid[neighbor[0]][neighbor[1]])
             if new_dist == float('inf'):    # Abbruchmöglichkeit durch cost implementierung
                 next
             if new_dist < dist.get(neighbor, float('inf')):
