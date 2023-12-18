@@ -2,3 +2,4 @@ numpy
 colorama
 advent-of-code-data
 austin-dist
+shapely
