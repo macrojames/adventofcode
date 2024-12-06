@@ -20,26 +20,40 @@ for y, row in enumerate(inputs):
     if (column := row.find("^")) > 0:
         start = (y, column)
 
-def part1():
-    visited = set()
-    facing = 0
+class LoopException(Exception):
+    pass
+
+def part1(blocks = set()):
     r, c = start
+    facing = 0
+    visited = set()
+    visited_dir = set()
     while 0 <= r < len(inputs) and 0 <= c < len(inputs[0]):
+        if (r, c, facing) in visited_dir:
+            raise LoopException
         visited.add((r, c))
-        
+        visited_dir.add((r, c, facing))
         nr, nc = r + dirs[facing][0], c + dirs[facing][1]
-        if (nr, nc) in blocks:
+        if (nr, nc) in (blocks):
             facing = (facing + 1) % 4
             nr, nc = r + dirs[facing][0], c + dirs[facing][1]
         else:
             r, c = nr, nc
+    return visited
 
-    return len(visited)
+def part2(visited=set()):
+    blockers = set()
+    for r, c in visited:
+        if (r, c) == start: continue
+        try:
+            _ = part1(blocks = blocks | {(r ,c)})
+        except LoopException:
+            blockers.add((r, c))
 
+    return blockers
 
-
-print("Part 1: ", part1())
-print("Part 2: ", part2())
+print("Part 1: ", len(visited := part1(blocks=blocks)))
+print("Part 2: ", len(part2(visited=visited)))
 
 print(f"{colorama.Fore.BLUE}Time elapsed: {round(time.time() - start_timer, 3)}s")
 
