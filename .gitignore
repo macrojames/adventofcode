@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 *.input
+2024/inputs/*.input
