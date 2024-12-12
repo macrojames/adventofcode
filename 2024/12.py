@@ -46,7 +46,7 @@ def parts():
                 already |= area
                 s += len(area)*perimeter
                 p2 += (len(area) * (x:=count_polygon(area)))
-                print(f"{len(area)} * {x} = {len(area)*x}")
+                #print(f"{len(area)} * {x} = {len(area)*x}")
     return s, p2
 
 def count_polygon(area):
