@@ -170,3 +170,19 @@ def shoelace_area_outer(polygon: list[tuple[int, int]]) -> float:
     for i in range(len(polygon) - 1):
         outer_ring += abs((polygon[i + 1][0] - polygon[i][0]) + (polygon[i + 1][1] - polygon[i][1]))
     return 1 + outer_ring // 2 + shoelace_area_inner(polygon)
+
+
+def get_indices(x: list, value: int) -> list:
+    indices = list()
+    i = 0
+    while True:
+        try:
+            # find an occurrence of value and update i to that index
+            i = x.index(value, i)
+            # add i to the list
+            indices.append(i)
+            # advance i by 1
+            i += 1
+        except ValueError as e:
+            break
+    return indices
