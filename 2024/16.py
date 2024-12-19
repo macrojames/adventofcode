@@ -23,48 +23,38 @@ for r, line in enumerate(inputs):
     c = line.find("S")
     if c > 0: start = (r, c)
 
+def all_shortest_paths(start, start_facing, end):
+    queue = [(0, start, [start], start_facing)]
+    min_cost = {(start, start_facing): 0}
+    found_paths = []
 
-def dijkstra_graph(graph, start, end, facing):
-    nodes_open = PriorityQueue()
-    nodes_open.put((0, (start[0], start[1], facing)))
-    dist = {(start[0], start[1], facing): 0}
-    previous = defaultdict(set)
-    visited = set()
-
-    while nodes_open:
-        while not nodes_open.empty():
-            _, node = nodes_open.get()
-            if node not in visited:
-                break
-        else:
-            break
-        visited.add((node[0], node[1], facing))
+    while queue:
+        cost, node, path, facing = queue.pop(0)
+        r, c = node
         if node == end:
-            break
-        r, c, facing = node
-        check_neighbors = [(r + dr, c + dc, dirs.index((dr, dc))) for dr, dc in [dirs[facing], dirs[(facing - 1) % 4], dirs[(facing + 1) % 4]] if (r + dr, c + dc) not in visited]
-        for nr, nc, nf in check_neighbors:
+            found_paths.append((path, facing, cost))
+            continue
+        for neighbor, new_facing in [((r + dr, c + dc), dirs.index((dr, dc))) \
+                                     for dr, dc in [dirs[facing], dirs[(facing - 1) % 4], dirs[(facing + 1) % 4]] \
+                                     if (r + dr, c + dc) and (r + dr, c + dc)]:
+            nr, nc = neighbor
             if not (0 <= nr < len(inputs) and 0 <= nc < len(inputs[0])): continue
-            if inputs[nr][nc] == '#':
-                visited.add((nr, nc, facing))
-                dist[(nr, nc, nf)] = float("inf")
+            if inputs[nr][nc] == '#': 
                 continue
-            new_dist = dist.get((r, c, facing)) + (1 if facing == nf else 1001)
-            if new_dist < dist.get((nr, nc, nf), float("inf")):
-                nodes_open.put((new_dist, (nr, nc, nf)))
-                dist[(nr, nc, nf)] = new_dist
-                previous[(nr, nc, nf)] = {(r, c, facing)}
-    return dist, previous
+            new_cost = cost + (1 if facing == new_facing else 1001)
+            new_path = path + [neighbor]
+            if (neighbor, new_facing) not in min_cost or new_cost < min_cost[(neighbor, new_facing)]:
+                min_cost[(neighbor, new_facing)] = new_cost
+                queue.append((new_cost, neighbor, new_path, new_facing))
+            elif new_cost == min_cost[(neighbor, new_facing)]:
+                queue.append((new_cost, neighbor, new_path, new_facing))
 
-def part1(start, end, facing):
-    dist, path = dijkstra_graph(inputs, start, end, facing)
-    return dist, path
+    return found_paths
 
-x, path = part1(start, end, facing)
-dists = [_ for _  in x.items() if _[1] != float("inf")]
-print("Part 1: ",min([_ for k, _ in dists if k[0] == end[0] and k[1] == end[1]]))
-pprint(path)
-print("Part 2: ")
+ 
+path = all_shortest_paths(start, facing, end)
+print("Part 1: ", cost := min([_[2] for _ in path]))
+print("Part 2: ", len(set([x for _ in path if _[2] == cost for x in _[0]])))
 
 print(f"{colorama.Fore.BLUE}Time elapsed: {round(time.time() - start_timer, 3)}s")
 
