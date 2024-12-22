@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
-from heapq import heappop, heappush
+from collections import Counter
+from functools import cache
+from heapq import heapify, heappop, heappush
+from itertools import product
 from pprint import pprint
+
 import time
 import os.path
 import re
@@ -42,13 +46,10 @@ def shortest_path(start, end, pad):
     while queue:
         cost, node, path, facing = heappop(queue)
         if node == end:
-            found_paths.append(path)
-            break
+            found_paths.append((path, cost))
+            # break
         for eingabe, ziel in zip(*pad[node]):
-            if "costs" in pad:
-                new_cost = cost + 1 + (0.1 * pad["costs"][eingabe])
-            else:
-                new_cost = cost + 1
+            new_cost = cost + 1  # + (2 if eingabe != facing else 0)
             # new_path = path + [neighbor]
             if ziel not in min_cost or new_cost < min_cost[ziel]:
                 min_cost[ziel] = new_cost
@@ -57,47 +58,61 @@ def shortest_path(start, end, pad):
             elif new_cost == min_cost[ziel]:
                 new_path = path + [eingabe]
                 heappush(queue, (new_cost, ziel, new_path, eingabe))
-    return min_cost, found_paths
+    return min_cost, [f for f, c in found_paths if c == min_cost.get(end)]
 
 
-direction_pad["costs"] = {k: shortest_path(k, "A", direction_pad)[0]["A"] for k in direction_pad}
-
-
+@cache
 def get_numeric_route(start, end):
     return shortest_path(start=start, end=end, pad=numeric_pad)
 
 
+@cache
 def get_directional_route(start, end):
     return shortest_path(start=start, end=end, pad=direction_pad)
 
 
-def get_directions(instructions, start="A"):
-    route = []
-    for inst in instructions:
-        for digit in inst:
-            route.extend(get_directional_route(start, digit)[1][0] + ["A"])
-            start = digit
-    return route
+def get_numeric_solution(instructions):
+    solution = []
+    cost = []
+    for start, digit in zip("A" + instructions, instructions):
+        c, paths = get_numeric_route(start, digit)
+        solution.append(["".join(_) + "A" for _ in paths])
+        cost.append(c[digit] + 1)
+    return sum(cost), solution
+
+
+@cache
+def get_directional_solution(instructions):
+    solution = []
+    cost = []
+    for start, digit in zip("A" + instructions, instructions):
+        c, paths = get_directional_route(start, digit)
+        solution.append(["".join(_) + "A" for _ in paths])
+        cost.append(c[digit] + 1)
+    return sum(cost), solution
 
 
 def part1():
-    routes = {}
-    for pin in inputs:
-        start = "A"
-        route = []
-        for digit in pin:
-            route.extend(get_numeric_route(start, digit)[1][0] + ["A"])
-            start = digit
-        routes[pin] = get_directions(get_directions(route))
-        # routes[pin] = [route, a := get_directions(route), get_directions(a)]
-    return routes
+    complexity = []
+    for pin in inputs[:]:
+        cost, paths = get_numeric_solution(pin)
+        next_paths = [(cost, "".join(combination)) for combination in product(*paths)]
+        heapify(next_paths)
+        for i in range(2):
+            step_paths = next_paths[:64]
+            next_paths = []
+            for old_costs, target in (heappop(step_paths) for _ in range(len(step_paths))):
+                tcost, tpaths = get_directional_solution(target)
+                target_paths = ("".join(combination) for combination in product(*tpaths))
+                for _ in target_paths:
+                    heappush(next_paths, (len(_), _))
+        complexity.append(next_paths[0][0] * int(pin[:-1]))
+    return sum(complexity)
 
 
 p1 = part1()
-l = [int(re.findall("\d+", k)[0]) * len(path) for k, path in p1.items()]
-x = sum(l)
-pprint({k: ["".join(_) for _ in v] for k, v in p1.items()}, depth=3, width=400)
-print("Part 1: ", x, x < 218806)  # False high
+
+print("Part 1: ", p1, p1 == (126384 if SAMPLE else 217662))
 # print("Part 2: ", part2())
 
 print(f"{colorama.Fore.BLUE}Time elapsed: {round(time.time() - start_timer, 3)}s")
