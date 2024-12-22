@@ -45,7 +45,10 @@ def shortest_path(start, end, pad):
             found_paths.append(path)
             break
         for eingabe, ziel in zip(*pad[node]):
-            new_cost = cost + 1 + (0 if eingabe in "<>" else 0.6) + (0 if facing == eingabe else 0.6)
+            if "costs" in pad:
+                new_cost = cost + 1 + (0.1 * pad["costs"][eingabe])
+            else:
+                new_cost = cost + 1
             # new_path = path + [neighbor]
             if ziel not in min_cost or new_cost < min_cost[ziel]:
                 min_cost[ziel] = new_cost
@@ -55,6 +58,9 @@ def shortest_path(start, end, pad):
                 new_path = path + [eingabe]
                 heappush(queue, (new_cost, ziel, new_path, eingabe))
     return min_cost, found_paths
+
+
+direction_pad["costs"] = {k: shortest_path(k, "A", direction_pad)[0]["A"] for k in direction_pad}
 
 
 def get_numeric_route(start, end):
