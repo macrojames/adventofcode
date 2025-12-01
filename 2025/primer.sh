@@ -1,0 +1,1 @@
+for i in {01..25}; do touch inputs/${i}.input; touch inputs/${i}.sample; cp new.py ${i}.py; done
