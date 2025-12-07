@@ -17,6 +17,10 @@ def read_input_lines(day, sample_mode, part=1):
     return [_.strip() for _ in open_input(day, sample_mode, part).readlines()]
 
 
+def read_input_lines_no_strip(day, sample_mode, part=1):
+    return [_.replace("\n", "") for _ in open_input(day, sample_mode, part).readlines()]
+
+
 def read_input_raw(day, sample_mode, part=1):
     return open_input(day, sample_mode, part).read()
 
@@ -186,3 +190,13 @@ def get_indices(x: list, value: int) -> list:
         except ValueError as e:
             break
     return indices
+
+
+def find_all(a_str, search):
+    start = 0
+    while True:
+        start = a_str.find(search, start)
+        if start == -1:
+            return
+        yield start
+        start += len(search)
