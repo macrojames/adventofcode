@@ -26,7 +26,7 @@ def distance(p0, p1):
     return sqrt((x1 - x0)**2 + (y1 - y0)**2 + (z1 - z0)**2)
 
 distances = {(p0, p1): distance(p0, p1) for p0, p1 in combinations(nodes, 2) if not p0==p1}
-sorted_distances = [(d, p) for (p, d) in sorted(distances.items(), key=lambda x: x[1])]
+sorted_distances = ((d, p) for (p, d) in sorted(distances.items(), key=lambda x: x[1]))
 
 networks = []
 
