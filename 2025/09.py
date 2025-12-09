@@ -41,7 +41,7 @@ def part2():
     for area, (p0, p1) in sorted_areas:
         rect = shapely.Polygon([p0, (p0[0], p1[1]), p1, (p1[0], p0[1])])
         if rect.covered_by(polygon):
-            return area, (p0, p1)
+            return area
     raise Exception
 
 
