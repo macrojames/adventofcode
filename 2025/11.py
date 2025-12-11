@@ -39,7 +39,6 @@ def find_ways(start, end):
         for target in targets:
             x = find_ways(target, end)
             result += x[target]
-            visited.update(x)
         if start not in visited:
             visited[start] = 0
         visited[start] += result
